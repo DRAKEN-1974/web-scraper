@@ -8,7 +8,7 @@ import time
 
 app = FastAPI()
 
-# --- CORS (allow all for dev, restrict for prod) ---
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,7 +17,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Simple In-Memory Rate Limiting (per IP, for demo) ---
 rate_limit = {}
 RATE_LIMIT = 20
 RATE_PERIOD = 60  # seconds
@@ -31,7 +30,7 @@ def check_rate_limit(ip):
     history.append(now)
     rate_limit[ip] = history
 
-# --- Utilities ---
+
 def is_valid_url(url: str) -> bool:
     try:
         parsed = urlparse(url)
@@ -126,11 +125,10 @@ def scrape(
         raise HTTPException(status_code=400, detail="Invalid URL")
 
     output = []
-    # Main page
+   
     page = scrape_page(url, selector, extract, includeMetadata, userAgent, timeout)
     output.append({"url": url, **page})
 
-    # Optionally follow links (only 1 extra level for demo/safety)
     if followLinks and maxDepth > 1 and (extract == "links" or (selector and not extract)):
         links = []
         if extract == "links":
